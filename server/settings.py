@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+  'daphne',
   'polls.apps.PollsConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
@@ -71,6 +72,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'server.wsgi.application'
+
+ASGI_APPLICATION = 'server.asgi.application'
 
 
 # Database
