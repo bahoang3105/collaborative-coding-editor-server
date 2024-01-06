@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
   'daphne',
+  'utils',
+  'code_editor',
   'polls.apps.PollsConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
