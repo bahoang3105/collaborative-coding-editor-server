@@ -35,6 +35,7 @@ class EditorManager(metaclass=SingletonMeta):
     return
 
   def _wakeup_editor(self, editor_id):
+    print(Editor.objects.all())
     editor = Editor.objects.get(id=editor_id)
     self._online_editors.update({
       editor_id: {

@@ -10,6 +10,9 @@ class Editor(models.Model):
   id = models.CharField(max_length=200, default=generateRandomString(), primary_key=True)
   content = models.JSONField(default=defaultJson)
 
+  def __str__(self):
+    return self.id
+
 class WhiteBoard(models.Model):
   editor = models.ForeignKey(Editor, on_delete=models.CASCADE)
   content: models.JSONField(default=defaultJson)

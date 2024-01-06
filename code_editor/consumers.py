@@ -21,6 +21,7 @@ class CodeEditorConsumer(WebsocketConsumer):
 
   def receive(self, text_data):
     text_data_json = json.loads(text_data)
-    message = text_data_json["message"]
+    event = text_data_json["event"]
+    data = text_data_json["data"]
 
-    self.send(text_data=json.dumps({"message": message}))
+    self.send(text_data=json.dumps({"event": event, "data": data}))
