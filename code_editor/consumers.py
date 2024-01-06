@@ -3,7 +3,7 @@ import json
 
 class CodeEditorConsumer(WebsocketConsumer):
   def connect(self):
-    print(self)
+    print(self.scope["url_route"]["kwargs"]["room_name"])
     self.accept()
   
   def disconnect(self, code):
