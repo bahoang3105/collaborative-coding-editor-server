@@ -1,4 +1,5 @@
 from threading import Lock
+from channels.db import database_sync_to_async
 
 from utils.IntervalTimer import IntervalTimer
 from .models import Editor
@@ -17,9 +18,9 @@ class SingletonMeta(type):
 class EditorManager(metaclass=SingletonMeta):
   _online_editors = dict()
 
-  def add_user_to_editor(self, user, editor_id):
+  async def add_user_to_editor(self, user, editor_id):
     if editor_id not in self._online_editors:
-      self._wakeup_editor(editor_id)
+      await self._wakeup_editor(editor_id)
     if user["id"] not in self._online_editors[editor_id]["users"]:
       self._online_editors[editor_id]["users"].update({user["id"]: user})
     return
@@ -34,9 +35,8 @@ class EditorManager(metaclass=SingletonMeta):
       self._online_editors.pop(editor_id)
     return
 
-  def _wakeup_editor(self, editor_id):
-    print(Editor.objects.all())
-    editor = Editor.objects.get(id=editor_id)
+  async def _wakeup_editor(self, editor_id):
+    editor = await self.get_editor_by_id(editor_id)
     self._online_editors.update({
       editor_id: {
         "users": dict(), 
@@ -53,10 +53,14 @@ class EditorManager(metaclass=SingletonMeta):
       "content": self._online_editors[editor_id]["content"],
     }
 
-  def _save_editor_data(self, editor_id):
+  async def _save_editor_data(self, editor_id):
     if editor_id not in self._online_editors:
       return
     content = self._online_editors[editor_id]["content"]
-    editor = Editor.objects.get(id=editor_id)
+    editor = await self.get_editor_by_id(editor_id)
     editor.content = content
-    editor.save()
+    await database_sync_to_async(editor.save)()
+
+  @database_sync_to_async
+  def get_editor_by_id(self, editor_id):
+    return Editor.objects.get(id=editor_id)
