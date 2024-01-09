@@ -40,7 +40,7 @@ class CodeEditorConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(
 			self.room_group_name, {
 				"type": "room_message",
-				"text_data": json.dumps({"from": self.user, "event": event, "data": data})
+				"text_data": json.dumps({"event": event, "data": {"from": self.user, "data": data}})
 			}
 		)
 	
