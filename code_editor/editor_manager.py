@@ -3,6 +3,7 @@ from channels.db import database_sync_to_async
 
 from utils.IntervalTimer import IntervalTimer
 from .models import Editor
+from .loogot.logoot import Logoot
 
 class SingletonMeta(type):
   _instances = {}
@@ -40,7 +41,7 @@ class EditorManager(metaclass=SingletonMeta):
     self._online_editors.update({
       editor_id: {
         "users": dict(), 
-        "content": editor.content, 
+        "content": Logoot(editor.content), 
         "interval_save_data": IntervalTimer(60, self._save_editor_data, editor_id) 
       }
     })
@@ -50,13 +51,13 @@ class EditorManager(metaclass=SingletonMeta):
       return
     return {
       "users": self._online_editors[editor_id]["users"],
-      "content": self._online_editors[editor_id]["content"],
+      "content": self._online_editors[editor_id]["content"].get_state(),
     }
 
   async def _save_editor_data(self, editor_id):
     if editor_id not in self._online_editors:
       return
-    content = self._online_editors[editor_id]["content"]
+    content = self._online_editors[editor_id]["content"].get_state()
     editor = await self.get_editor_by_id(editor_id)
     editor.content = content
     await database_sync_to_async(editor.save)()
@@ -64,3 +65,9 @@ class EditorManager(metaclass=SingletonMeta):
   @database_sync_to_async
   def get_editor_by_id(self, editor_id):
     return Editor.objects.get(id=editor_id)
+  
+  def insert_into_editor(self, editor_id, position, value):
+    self._online_editors[editor_id]["content"].insert(position, value)
+
+  def delete_from_editor(self, editor_id, position):
+    self._online_editors[editor_id]["content"].delete(position)

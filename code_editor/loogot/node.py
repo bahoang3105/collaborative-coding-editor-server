@@ -1,6 +1,6 @@
 class Node():
 
-  def __init__(self, id, value: str):
+  def __init__(self, id, value: str = None):
     self.id = id
     self.value = value or ''
     self.children = []

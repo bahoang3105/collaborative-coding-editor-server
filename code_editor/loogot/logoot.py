@@ -1,9 +1,10 @@
-from node import Node
 import json
-from identifier import Identifier
+
+from .node import Node
+from .identifier import Identifier
 
 class Logoot():
-  def __init__(self, state) -> None:
+  def __init__(self, state = None) -> None:
     self.delete_queue = []
     Node.compare = lambda a, b: a.compare(b)
     self.root = Node(Identifier(0, '', 0))
@@ -65,7 +66,7 @@ class Logoot():
     self.delete_queue = [Logoot.parse_id(id) for id in parsed["deleteQueue"]]
 
   def get_state(self):
-    return json.dumps({"root": self.root, "deleteQueue": self.delete_queue}, default=lambda key, value: value if key != "parent" else None)
+    return json.dumps({"root": self.root, "deleteQueue": self.delete_queue})
 
   def get_value(self):
     arr = []
